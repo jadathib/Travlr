@@ -1,4 +1,4 @@
-const index = (req, res) => {
+const index = (_req, res) => {
   res.render('index', {title: 'Travlr Getaways'});
 };
 
