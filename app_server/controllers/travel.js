@@ -1,4 +1,4 @@
-const travel = (req, res) => {
+const travel = (_req, res) => {
   res.render('travel', {title: 'Travlr Getaways'});
 };
 
