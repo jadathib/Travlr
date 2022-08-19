@@ -1,9 +1,10 @@
 const mongoose = require('mongoose'); 
-const model = mongoose.model('trips'); 
+const Trip = mongoose.model('trips'); 
+const User = mongoose.model('users');
 
 //GET: /trips- lists all the trips
 const tripsList = async (req, res) => {
-  model 
+  Trip 
       .find({}) //empty filter for all, which returens all trips 
       .exec((err, trips) => {//what happens when javascript runs function
         if (!trips) {//if nothing gets returned
@@ -23,7 +24,7 @@ const tripsList = async (req, res) => {
 };
 
 const tripsFindCode = async (req, res) => {//call trips and place a parameter of the trip code
-  model 
+  Trip 
       .find({ 'code': req.params.tripCode })//pass a filter criteria of the code
       .exec((err, trip) => {//all error codes are same from the top
           if (!trip) {
@@ -44,7 +45,10 @@ const tripsFindCode = async (req, res) => {//call trips and place a parameter of
 
 
 const tripsAddTrip = async (req, res) => {
-  model 
+  console.log('tripsAddTrip invoked with: \n' + req.body);
+  getUser(req, res, 
+    (req, res) => {
+  Trip 
       .create({
         code: req.body.code, 
         name: req.body.name, 
@@ -65,12 +69,16 @@ const tripsAddTrip = async (req, res) => {
                   .status(201) 
                   .json(trip);
           }
-    });
+      });
+    }
+  )
 };
 
 const tripsUpdateTrip = async (req, res) => {
   console.log(req.body);
-  model
+  getUser (req, res, 
+    (req, res) => {
+  Trip
       .findOneAndUpdate({ 'code': req.params.tripCode }, {
         code: req.body.code,
         name: req.body.name,
@@ -104,7 +112,33 @@ const tripsUpdateTrip = async (req, res) => {
         .status(500) // server error
         .json(err);
       });
+    }
+    )
 }
+
+const getUser = (req, res, callback) => {
+  if (req.payload && req.payload.email) {
+    User 
+      .findOne( { email: req.payload.email })
+      .exec((err, user) => {
+        if (!user) {
+          return res 
+            .status(404)
+            .json({ "message": "User not found there, frien" }); 
+        } else if (err) { 
+          console.log(err); 
+          return res 
+            .status(404) 
+            .json(err);
+        }
+        callback(req, res, user.name); 
+      });
+  } else { 
+    return res 
+      .status(404) 
+      .json({ "message": "User not found, there, frien" });
+  }  
+};
 
 module.exports = {
   tripsList,
