@@ -1,4 +1,4 @@
-Architecture 
+<h1>Architecture</h1> 
 The types of frontend development used in this full stack project was Express HTML, JavaScript and a single page application. The Express HTML file was pretty easy to construct since it I got to use HandleBars. This was new for me, but self explanatory with the constant like use a {{ title }} function to update for all title pages. 
 
 Functionality
