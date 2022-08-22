@@ -1,10 +1,15 @@
 const express = require('express'); 
 const router = express.Router(); 
-const jwt = require('express-jwt');
-const auth = jwt({
-    secret: process.env.JWT_SECRET,
-    userProperty: 'payload'
-});
+const { expressjwt: expressJwt } = require('express-jwt');
+function auth() {
+    const secret = process.env.JWT_SECRET;
+    return console.log(
+      expressJwt({
+        secret,
+        userProperty: 'payload',
+      })
+    );
+  }//I FREAKING CHANGED THE FUNCTION!!!!! IT ONLY TOOK 4 DAYS AND A SLIGHT BREAK DOWN!!!:)
 
 const authController = require('../controllers/authentication');
 const tripsController = require('../controllers/trips');
