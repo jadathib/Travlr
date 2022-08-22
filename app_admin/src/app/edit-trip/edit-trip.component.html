@@ -58,7 +58,7 @@
     placeholder="PerPerson" class="form-control"
       [ngClass]="{ 'is-invalid': submitted && f.perPerson.errors }">
     <div *ngIf="submitted && f.perPerson.errors">
-      <div *ngIf="f.perPerson?.errors?.required">Person is required</div>
+      <div *ngIf="f.perPerson.errors.required">Person is required</div>
     </div>
   </div>
 
