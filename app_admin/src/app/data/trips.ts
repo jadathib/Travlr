@@ -1,8 +1,8 @@
 export const trips =
 [
   {
-    "code": "GALR210214",
-    "name": "Gale Reef", 
+    "code": "Q411",
+    "name": "Queen, Williamsburg...Brooklyn Baby", 
     "length": "4 nights / 5 days",
     "start": "2021-02-14T08:00:00Z",
     "resort": "Emerald Bay, 3 stars",
