@@ -4,24 +4,14 @@ const User = mongoose.model('users');
 
 //GET: /trips- lists all the trips
 const tripsList = async (req, res) => {
-  Trip 
-      .find({}) //empty filter for all, which returens all trips 
-      .exec((err, trips) => {//what happens when javascript runs function
-        if (!trips) {//if nothing gets returned
-          return res//error message 
-              .status(404)
-              .json({ "message": "trip not found"});
-        } else if (err) {//else if we did get error from mongoose
-          return res
-              .status(404)
-              .json(err);//then take errorblock turn into javascript
-        } else {//else success
-          return res 
-              .status(200)
-              .json(trips);
-        }
-    });
+    try {
+        const trips = await Trip.find({});
+        res.status(200).json(trips);
+    } catch (err) {
+        res.status(500).json(err);
+    }
 };
+
 
 const tripsFindCode = async (req, res) => {//call trips and place a parameter of the trip code
   Trip 
