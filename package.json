@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "jws": "^4.0.0",
     "jwt-express-route-auth": "^1.0.0",
+    "mongo": "^0.1.0",
     "mongoose": "^8.9.5",
     "mongoose-seed": "^0.6.0",
     "morgan": "~1.9.1",
