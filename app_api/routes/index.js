@@ -1,35 +1,12 @@
-const express = require('express'); 
-const router = express.Router(); 
-const { expressjwt: expressJwt } = require('express-jwt');
-function auth() {
-    const secret = process.env.JWT_SECRET;
-    return console.log(
-      expressJwt({
-        secret,
-        userProperty: 'payload',
-      })
-    );
-  }//I FREAKING CHANGED THE FUNCTION!!!!! IT ONLY TOOK 4 DAYS AND A SLIGHT BREAK DOWN!!!:)
+// routes/index.js
+const express = require('express');
+const router = express.Router();
+const authenticationController = require('../controllers/authentication');
 
-const authController = require('../controllers/authentication');
-const tripsController = require('../controllers/trips');
+// Registration route
+router.post('/register', authenticationController.register);
 
-router 
-    .route('/login')
-    .post(authController.login);
+// Login route
+router.post('/login', authenticationController.login);
 
-router 
-    .route('/register')
-    .post(authController.register); 
-
-router
-    .route('/trips') //take a request for trips
-    .get(tripsController.tripsList) //pass it to the controller
-    .post(auth, tripsController.tripsAddTrip);
-
-router
-    .route('/trips/:tripCode')//setting the route for the tripCode parameter
-    .get(tripsController.tripsFindCode)// pass it to the controller
-    .put(auth, tripsController.tripsUpdateTrip);
-    
 module.exports = router;

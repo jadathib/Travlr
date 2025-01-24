@@ -1,43 +1,36 @@
-const mongoose = require('mongoose'); 
-const crypto = require('crypto'); 
-const jwt = require ('jsonwebtoken'); 
+// models/user.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
+// Define the user schema
 const userSchema = new mongoose.Schema({
-    email: { 
-      type: String, 
-      unique: true, 
-      require: true
-    }, 
-    name: { 
-      type: String, 
-      required: true
+    name: {
+        type: String,
+        required: true
     },
-    hash: String, //hashing & salting allows it to be encrypted in case of data breach!
-    salt: String 
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
 });
 
-userSchema.methods.setPassword = function(password) { 
-  this.salt = crypto.randomBytes(16).toString('hex'); 
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 
-    1000, 64, 'sha512').toString('hex');
+// Add a method to hash the password
+userSchema.methods.setPassword = function(password) {
+    this.password = bcrypt.hashSync(password, 10);
 };
 
-userSchema.methods.validPassword = function(password) {
-  var hash = crypto.pbkdf2Sync(password, 
-    this.salt, 1000, 64, 'sha512').toString('hex'); 
-  return this.hash === hash; 
-};
-
+// Add a method to generate JWT
 userSchema.methods.generateJwt = function() {
-  const expiry = new Date(); 
-  expiry.setDate(expiry.getDate() + 7); 
-
-  return jwt.sign({
-    _id: this._id, 
-    email: this.email, 
-    name: this.name, 
-    exp: parseInt(expiry.getTime() /1000, 10), 
-  }, process.env.JWT_SECRET);
+    return jwt.sign({ _id: this._id, name: this.name, email: this.email }, 'your_jwt_secret', { expiresIn: '1h' });
 };
 
-mongoose.model('users', userSchema);
+// Register the schema as a model
+const User = mongoose.model('users', userSchema);
+
+module.exports = User;

@@ -1,25 +1,34 @@
-const passport = require('passport'); //bring in passport library
-const LocalStrategy = require('passport-local').Strategy; //using local strategy
-const mongoose = require('mongoose'); //bring in mongoose
-const User = mongoose.model('users'); 
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-passport.use(new LocalStrategy({
-    usernameField: 'email'
-  }, 
-  (username, password, done) => {
-    User.findOne({ email: username }, (err, user) => { //mongoose find method
-      if (err) { return done(err); }
-      if (!user) { 
-        return done(null, false, { 
-          message: 'Incorrect username there, frien.'
-        });
-      }
-      if (!user.validPassword(password)) { 
-        return done(null, false, {
-          message: 'Wrong password there, frien.'
-        });
-      }
-      return done(null, user);
-    });
-  }
-));
+const userSchema = new mongoose.Schema({
+    email: { type: String, unique: true },
+    password: { type: String, required: true },
+    // other fields as needed
+});
+
+// Hash password before saving it
+userSchema.pre('save', function(next) {
+    if (this.isModified('password') || this.isNew) {
+        this.password = bcrypt.hashSync(this.password, 10);
+    }
+    next();
+});
+
+// Method to check if the password matches
+userSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
+};
+
+// Method to generate JWT
+userSchema.methods.generateJwt = function() {
+    return jwt.sign(
+        { _id: this._id, email: this.email },
+        process.env.JWT_SECRET, // Ensure you have this set in your .env file
+        { expiresIn: '1h' }
+    );
+};
+
+const User = mongoose.model('User', userSchema);
+module.exports = User;
