@@ -7,6 +7,8 @@ const logger = require('morgan');
 require('./app_api/models/db');
 const passport = require('passport');
 require('./app_api/config/passport');
+const favicon = require('serve-favicon');
+const cors = require('cors');
 
 const indexRouter = require('./app_server/routes/index');
 const usersRouter = require('./app_server/routes/users');
@@ -30,6 +32,12 @@ app.use('/api', (req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow all necessary methods
   next();
 });
+
+app.use(cors({
+  origin: 'http://localhost:4200', // Add the URL of your Angular app
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 // Route setup
 app.use('/', indexRouter);

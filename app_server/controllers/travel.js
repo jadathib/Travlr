@@ -1,51 +1,56 @@
-const request = require('request'); //creation of request object
-const apiOptions = { //javascription option w server url
+const request = require('request'); // Request object for API calls
+const apiOptions = { // Configuration for server URL
     server: 'http://localhost:3000'
 }
 
-/* render travel list view*/ 
+/* Render the travel list view */
 const renderTravelList = (req, res, responseBody) => {
-    let message = null; // process the body that came back from the api call
-    let pageTitle = process.env.npm_package_description + ' - Travel'; 
+    let message = null;  // Initialize message to null
+    let pageTitle = process.env.npm_package_description + ' - Travel';
 
-    if(!(responseBody instanceof Array)) {//if the result that came back is not an error
-        message = 'API lookup error'; 
-        responseBody = []; //then empty array
+    if (!(responseBody instanceof Array)) { // If the response is not an array
+        message = 'API lookup error';
+        responseBody = []; // Default to empty array if there's an error
     } else {
-        if (!responseBody.length) {//we could get an array that is empty, like nothing in the database so 
-            message = 'No trips exist in database!'; // set the message
+        if (!responseBody.length) { // If no trips in the database
+            message = 'No trips exist in the database!';
         }
     }
 
-    res.render('travel', {//call the response object
-        title: pageTitle, 
-        trips: responseBody, //instead of coming from the file system, passing the response body from the api
+    // Render the travel list page, passing the trips and any messages
+    res.render('travel', {
+        title: pageTitle,
+        trips: responseBody,
         message
     });
 };
 
-/* GET traveler list view */
-const travelList = (req, res) => { //returns a list of trips
-    const path = '/api/trips'; //path points to api location
-    const requestOptions = { //request options
-        url: `${apiOptions.server}${path}`, //the url
-        method: 'GET', //the method
-        json: {}, //the body
+/* Get traveler list view */
+const travelList = (req, res) => {
+    const path = '/api/trips'; // Path for the API endpoint
+    const requestOptions = {
+        url: `${apiOptions.server}${path}`,  // Construct the full URL
+        method: 'GET',  // HTTP method for the request
+        json: true,     // Automatically parse JSON response
     };
 
-    console.info('>> travelController.travelList calling' + requestOptions.url); //emit on the console the controller is making a call over to the api that there is a request being made
+    console.info('>> travelController.travelList calling ' + requestOptions.url); // Log the API call
 
-    request(
-        requestOptions, 
-        (err, { statusCode }, body) => {
-            if (err) {
-                console.error(err);
-            }
-            renderTravelList(req, res, body); // renders the travel list
+    // Perform the API request
+    request(requestOptions, (err, response, body) => {
+        if (err) {
+            console.error(err); // Log any error
+            return res.status(500).json({ message: 'Error retrieving travel list from API.' }); // Send error response to the client
         }
-    );
+
+        if (response.statusCode !== 200) { // Handle non-200 status codes
+            return res.status(response.statusCode).json({ message: 'Error fetching data from the server.' });
+        }
+
+        renderTravelList(req, res, body);  // Call the render function with the response body
+    });
 };
 
 module.exports = {
-    travelList, 
+    travelList,
 };

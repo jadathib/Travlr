@@ -1,34 +1,56 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user'); // Adjust the path if necessary
 
-const userSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    password: { type: String, required: true },
-    // other fields as needed
+// Define the local strategy for user authentication
+passport.use(
+    new LocalStrategy(
+        {
+            usernameField: 'email',   // Use email as the username field
+            passwordField: 'password', // Password field
+        },
+        async (email, password, done) => {
+            try {
+                // Query the user by email
+                const user = await User.findOne({ email });
+
+                // Log the user object to verify its contents
+                console.log('User:', user);  // This will show the entire user object
+
+                // If no user found, return error
+                if (!user) {
+                    return done(null, false, { message: 'Invalid email or password.' });
+                }
+
+                // Check if the password is correct
+                const isPasswordValid = user.validPassword(password);  // Ensure this method is defined in your user schema
+                if (!isPasswordValid) {
+                    return done(null, false, { message: 'Invalid email or password.' });
+                }
+
+                // If everything is okay, return the user object
+                return done(null, user);
+            } catch (err) {
+                // Handle errors, such as database issues, etc.
+                console.error('Error during authentication:', err); // Log the error for debugging
+                return done(err);
+            }
+        }
+    )
+);
+
+// Serialize and deserialize user to support session-based login (if needed)
+passport.serializeUser((user, done) => {
+    done(null, user.id); // Store the user ID in the session
 });
 
-// Hash password before saving it
-userSchema.pre('save', function(next) {
-    if (this.isModified('password') || this.isNew) {
-        this.password = bcrypt.hashSync(this.password, 10);
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user); // Return the user object from the ID stored in the session
+    } catch (err) {
+        done(err, null); // Handle error if user not found
     }
-    next();
 });
 
-// Method to check if the password matches
-userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.password);
-};
-
-// Method to generate JWT
-userSchema.methods.generateJwt = function() {
-    return jwt.sign(
-        { _id: this._id, email: this.email },
-        process.env.JWT_SECRET, // Ensure you have this set in your .env file
-        { expiresIn: '1h' }
-    );
-};
-
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+module.exports = passport;

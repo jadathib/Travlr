@@ -1,12 +1,12 @@
-// routes/index.js
 const express = require('express');
 const router = express.Router();
-const authenticationController = require('../controllers/authentication');
 
-// Registration route
-router.post('/register', authenticationController.register);
+// Import your controllers properly
+const authController = require('../controllers/authentication'); // Ensure correct path
 
-// Login route
-router.post('/login', authenticationController.login);
+// Define routes with proper handler functions
+router.post('/login', authController.login);  // Should be the login function from authentication.js
+router.post('/register', authController.register);  // Should be the register function from authentication.js
 
 module.exports = router;
+
