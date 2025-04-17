@@ -27,14 +27,14 @@ app.use(passport.initialize());
 
 // Allow CORS - Updated to handle all routes that start with '/api'
 app.use('/api', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');  // Allow frontend domain
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND_ORIGIN || 'http://localhost:3000');  // Allow frontend domain
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow all necessary methods
   next();
 });
 
 app.use(cors({
-  origin: 'http://localhost:4200', // Add the URL of your Angular app
+  origin: process.env.ADMIN_ORIGIN || 'http://localhost:4200', // URL of the Angular admin app
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

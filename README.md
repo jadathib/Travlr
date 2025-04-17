@@ -27,7 +27,16 @@ A full-stack travel application that allows users to browse and book travel expe
    ```
    npm install
    ```
-3. Set up environment variables (create a `.env` file)
+3. Set up environment variables (create a `.env` file) with the following variables:
+   ```
+   JWT_SECRET=your_jwt_secret
+   JWT_EXPIRES_IN=1d
+   NODE_ENV=development
+   MONGODB_URI=your_mongodb_connection_string
+   PORT=3000
+   FRONTEND_ORIGIN=http://localhost:3000
+   ADMIN_ORIGIN=http://localhost:4200
+   ```
 4. Start the application:
    ```
    npm start
@@ -57,3 +66,30 @@ A full-stack travel application that allows users to browse and book travel expe
 
 ## Development Notes
 This project was developed as a full-stack application showcasing the integration of various technologies. The original implementation has been enhanced with modern development practices and improved security features.
+
+## Development and Troubleshooting
+
+### Running in Development Mode
+For development with auto-reload:
+```
+npm run dev
+```
+
+### Common Issues and Solutions
+
+#### Database Connection Issues
+- Ensure your MongoDB connection string is correct in the `.env` file
+- Make sure the database name is included at the end of the connection string (e.g., `/travlr`)
+- Check that MongoDB is running and accessible
+
+#### Port Conflicts
+If you get an `EADDRINUSE` error:
+- Check if you have another instance of the app running
+- Change the PORT in your `.env` file
+
+#### Authentication Issues
+- Ensure your JWT_SECRET is set in the `.env` file
+- Check that you're sending the proper Authorization headers in requests
+
+#### CORS Issues
+- Verify that the FRONTEND_ORIGIN and ADMIN_ORIGIN in your `.env` file match the actual URLs of your frontend and admin applications

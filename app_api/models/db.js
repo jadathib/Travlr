@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-// Use your connection string here
-const dbURI = 'mongodb+srv://JadaThibodeaux:Bitchpleaze1!@cluster0.z80ru.mongodb.net/';
+// Use environment variable for connection string
+const dbURI = process.env.MONGODB_URI;
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Mongoose connected successfully'))
