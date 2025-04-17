@@ -45,24 +45,45 @@ app.use('/users', usersRouter);
 app.use('/travel', travelRouter);
 app.use('/api', apiRouter);
 
-// Error handling
-app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({ message: `${err.name}: ${err.message}` });
-  } else {
-    next(err);
-  }
-});
-
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
 });
 
-// Error handler
+// Centralized error handler
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({ error: err.message });
+  // Set locals, only providing error in development
+  const isDev = req.app.get('env') === 'development';
+
+  // Handle specific error types
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({
+      status: 'error',
+      statusCode: 401,
+      message: 'Unauthorized: Authentication required',
+      detail: isDev ? err.message : undefined
+    });
+  }
+
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({
+      status: 'error',
+      statusCode: 400,
+      message: 'Validation Error',
+      errors: err.errors,
+      detail: isDev ? err.message : undefined
+    });
+  }
+
+  // Default error handler
+  const statusCode = err.status || 500;
+  res.status(statusCode).json({
+    status: 'error',
+    statusCode,
+    message: statusCode === 404 ? 'Not Found' : 'Internal Server Error',
+    detail: isDev ? err.message : undefined,
+    stack: isDev ? err.stack : undefined
+  });
 });
 
 module.exports = app;

@@ -2,62 +2,158 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy; // Correct import for passport-local
 const User = require('../models/user'); // Adjust the path if necessary
 
-// User registration
-const register = (req, res) => {
-  const { name, email, password } = req.body;
-
-  // Validate required fields
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "All fields are required, friend!" });
+// Input validation helper
+const validateInput = (input, field) => {
+  if (!input) {
+    return `${field} is required`;
   }
 
-  // Create new user
-  const user = new User();
-  user.name = name;
-  user.email = email;
-  user.setPassword(password); // Hash password using setPassword method defined in User schema
-
-  // Save user to database
-  user.save((err) => {
-    if (err) {
-      // Check for duplicate email
-      if (err.code === 11000) {
-        return res.status(400).json({ message: "Email already exists" });
-      }
-      return res.status(400).json({ message: "Error saving user", error: err });
+  if (field === 'email') {
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(input)) {
+      return 'Please provide a valid email address';
     }
+  }
+
+  if (field === 'password' && input.length < 6) {
+    return 'Password must be at least 6 characters long';
+  }
+
+  return null;
+};
+
+// User registration
+const register = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    // Validate input
+    const errors = {};
+    const nameError = validateInput(name, 'name');
+    const emailError = validateInput(email, 'email');
+    const passwordError = validateInput(password, 'password');
+
+    if (nameError) errors.name = nameError;
+    if (emailError) errors.email = emailError;
+    if (passwordError) errors.password = passwordError;
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ 
+        status: 'error',
+        message: 'Validation failed',
+        errors 
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ 
+        status: 'error',
+        message: 'Registration failed',
+        errors: { email: 'Email already exists' } 
+      });
+    }
+
+    // Create new user
+    const user = new User({
+      name,
+      email,
+      password,
+      role: role || 'user'
+    });
+
+    // Save user to database
+    await user.save();
 
     // Generate JWT for the new user
     const token = user.generateJwt();
-    res.status(200).json({ token });
-  });
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Registration successful',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
+      token
+    });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ 
+      status: 'error',
+      message: 'Registration failed',
+      error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    });
+  }
 };
 
 // User login
-const login = (req, res) => {
-  const { email, password } = req.body;
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  // Validate required fields
-  if (!email || !password) {
-    return res.status(400).json({ message: "All fields are required, friend!" });
-  }
+    // Validate input
+    const errors = {};
+    const emailError = validateInput(email, 'email');
+    const passwordError = validateInput(password, 'password');
 
-  // Authenticate user using Passport
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      console.error("Passport authentication error:", err); // Log error for debugging
-      return res.status(500).json({ message: "Internal server error", error: err });
+    if (emailError) errors.email = emailError;
+    if (passwordError) errors.password = passwordError;
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ 
+        status: 'error',
+        message: 'Validation failed',
+        errors 
+      });
     }
 
-    if (!user) {
-      // User not found or invalid credentials
-      return res.status(401).json({ message: "Invalid email or password" });
+    // Use a promise-based approach for passport authentication
+    const authenticate = () => {
+      return new Promise((resolve, reject) => {
+        passport.authenticate('local', (err, user, info) => {
+          if (err) return reject(err);
+          if (!user) return resolve({ success: false, message: info.message || 'Invalid email or password' });
+          return resolve({ success: true, user });
+        })(req, res);
+      });
+    };
+
+    const authResult = await authenticate();
+
+    if (!authResult.success) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication failed',
+        error: authResult.message
+      });
     }
 
     // User authenticated successfully
-    const token = user.generateJwt();
-    return res.status(200).json({ message: "Login successful", token });
-  })(req, res);
+    const token = authResult.user.generateJwt();
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Login successful',
+      user: {
+        id: authResult.user._id,
+        name: authResult.user.name,
+        email: authResult.user.email,
+        role: authResult.user.role
+      },
+      token
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Login failed',
+      error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    });
+  }
 };
 
 // Passport local strategy configuration
