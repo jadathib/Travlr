@@ -1,4 +1,4 @@
-<div class="col-md-3">
+<div class="col-md-6">
   <h2 class="text-center">Edit Trip</h2>
   <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
 
@@ -41,7 +41,7 @@
       <div *ngIf="f.start.errors.required">Start Date is required</div>
     </div>
   </div>
-    
+
   <div class="form-group">
     <label>Resort:</label>
     <input type="text" formControlName="resort"
@@ -74,9 +74,9 @@
 
   <div class="form-group">
     <label>Description:</label>
-    <input type="text" formControlName="description"
+    <textarea formControlName="description" rows="5"
     placeholder="Description" class="form-control"
-      [ngClass]="{ 'is-invalid': submitted && f.description.errors }">
+              [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
     <div *ngIf="submitted && f.description.errors">
       <div *ngIf="f.description.errors.required">
         Description is required</div>
