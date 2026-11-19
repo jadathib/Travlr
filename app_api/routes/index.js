@@ -48,11 +48,12 @@ router.get('/trips/:tripId', tripsController.getTripById);
 router.put('/trips/:tripId', auth, tripsController.updateTrip);
 router.delete('/trips/:tripId', auth, tripsController.deleteTrip);
 
+//COMMENT EVERYTHING WITH THE REVIEWS ROUTER TO
 // Reviews routes
-router.get('/trips/:tripId/reviews', reviewsController.getReviewsByTrip);
-router.post('/trips/:tripId/reviews', auth, reviewsController.createReview);
-router.get('/reviews/:reviewId', reviewsController.getReviewById);
-router.put('/reviews/:reviewId', auth, reviewsController.updateReview);
-router.delete('/reviews/:reviewId', auth, reviewsController.deleteReview);
+// router.get('/trips/:tripId/reviews', reviewsController.getReviewsByTrip);
+// router.post('/trips/:tripId/reviews', auth, reviewsController.createReview);
+// router.get('/reviews/:reviewId', reviewsController.getReviewById);
+// router.put('/reviews/:reviewId', auth, reviewsController.updateReview);
+// router.delete('/reviews/:reviewId', auth, reviewsController.deleteReview);
 
 module.exports = router;
