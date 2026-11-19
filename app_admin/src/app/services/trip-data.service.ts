@@ -19,9 +19,34 @@ export class TripDataService {
 
   // Add a new trip
   public addTrip(formData: Trip): Promise<Trip> {
+    const token = this.storage.getItem('travlr-token');
+
+    if (!token) {
+      return Promise.reject(new Error('Sign in before saving a trip.'));
+    }
+
     console.log('Inside TripDataService#addTrip');
+
+    //PAYLOAD DATA
+    const startDate = new Date(formData.start);
+    const endDate = new Date(startDate);
+    endDate.setUTCDate(endDate.getUTCDate() + Number(formData.length) - 1);
+
+    const payload = {
+      code: formData.code,
+      name: formData.name,
+      description: formData.description,
+      destination: formData.resort,
+      startDate,
+      endDate,
+      price: Number(String(formData.perPerson).replace(/,/g, '')),
+      images: [formData.image]
+    };
+
     return this.http
-      .post<Trip>(this.tripUrl, formData) // Ensure response is of type Trip
+      .post<Trip>(`${this.tripUrl}`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      }) // Ensure response is of type Trip
       .toPromise()
       .catch(this.handleError);
   }
@@ -44,12 +69,17 @@ export class TripDataService {
       .catch(this.handleError);
   }
 
-  // Update an existing trip
   public updateTrip(formData: Trip): Promise<Trip> {
-    console.log('Inside TripDataService#updateTrip');
-    console.log(formData);
+    const token = this.storage.getItem('travlr-token');
+
+    if (!token) {
+      return Promise.reject(new Error('Sign in before saving a trip.'));
+    }
+
     return this.http
-      .put<Trip>(`${this.tripUrl}${formData.code}`, formData) // Ensure response is of type Trip
+      .put<Trip>(`${this.tripUrl}${formData._id}`, formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .toPromise()
       .catch(this.handleError);
   }
