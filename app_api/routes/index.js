@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 // Import controllers
 const authController = require('../controllers/authentication');
 const tripsController = require('../controllers/trips');
-const reviewsController = require('../controllers/reviews');
+//UNTIL I ADD THE CONTROLLER AND MODEL, JUST REMOVE
+//const reviewsController = require('../controllers/reviews');
 
 // Authentication middleware
 const auth = (req, res, next) => {
