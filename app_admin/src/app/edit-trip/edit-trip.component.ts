@@ -23,7 +23,7 @@ export class EditTripComponent implements OnInit {
     // retrieve stashed tripId
     let tripCode = localStorage.getItem("tripCode");
     const tripId = localStorage.getItem("tripId");
-    if (!tripCode) {
+    if (!tripCode || !tripId) {
       alert ("Something wrong, couldn't find where I stashed tripCode!");
       this.router.navigate(['']);
       return;
@@ -46,7 +46,7 @@ export class EditTripComponent implements OnInit {
 
     console.log('EditTripComponent#onInit calling TripDataService#getTrip(\'' + tripCode + '\')');
 
-    this.tripService.getTrip(tripCode)
+    this.tripService.getTrip(tripId)
       .then(data => {
         console.log(data);
         // Don't use editForm.setValue() as it will throw
