@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; 
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router'
 import { TripDataService } from '../services/trip-data.service';
@@ -9,40 +9,41 @@ import { TripDataService } from '../services/trip-data.service';
   styleUrls: ['./edit-trip.component.css']
 })
 export class EditTripComponent implements OnInit {
-  
-  editForm!: FormGroup; 
-  submitted = false; 
-  
-  constructor( 
-    private formBuilder: FormBuilder, 
-    private router: Router, 
+
+  editForm!: FormGroup;
+  submitted = false;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
     private tripService: TripDataService
   ) { }
-  
+
   ngOnInit() {
-    // retrieve stashed tripId 
-    let tripCode = localStorage.getItem("tripCode"); 
+    // retrieve stashed tripId
+    let tripCode = localStorage.getItem("tripCode");
+    const tripId = localStorage.getItem("tripId");
     if (!tripCode) {
-      alert ("Something wrong, counldn't find where I stashed tripCode!"); 
-      this.router.navigate(['']); 
+      alert ("Something wrong, couldn't find where I stashed tripCode!");
+      this.router.navigate(['']);
       return;
-    } 
-    
-    console.log('EditTripComponent#onInit found tripCode ' + tripCode); 
-    
-    //initialize form 
+    }
+
+    console.log('EditTripComponent#onInit found tripCode ' + tripCode);
+
+    //initialize form
     this.editForm = this.formBuilder.group({
-      _id: [], 
-      code: [tripCode, Validators.required], 
-      name: ['', Validators.required], 
-      length: ['', Validators.required], 
-      start: ['', Validators.required], 
-      resort: ['', Validators.required], 
-      perPerson: ['', Validators.required], 
-      image: ['', Validators.required], 
+      _id: [],
+      code: [tripCode, Validators.required],
+      name: ['', Validators.required],
+      length: ['', Validators.required],
+      start: ['', Validators.required],
+      resort: ['', Validators.required],
+      perPerson: ['', Validators.required],
+      image: ['', Validators.required],
       description: ['', Validators.required],
     })
-    
+
     console.log('EditTripComponent#onInit calling TripDataService#getTrip(\'' + tripCode + '\')');
 
     this.tripService.getTrip(tripCode)
@@ -52,7 +53,7 @@ export class EditTripComponent implements OnInit {
         this.editForm.patchValue(data);
       })
   }
-  
+
   onSubmit() {
     this.submitted = true;
 
@@ -65,7 +66,7 @@ export class EditTripComponent implements OnInit {
     }
   }
 
-  // get the form short name to access the form fields 
+  // get the form short name to access the form fields
   get f() { return this.editForm.controls; }
 
 }
