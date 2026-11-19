@@ -17,6 +17,10 @@ const apiRouter = require('./app_api/routes/index');
 const hbs = require('hbs');
 
 const app = express();
+//WHERE AND WHEN TO FIND THE TRAVEL HANDLE BARS FILE
+app.set('views', path.join(__dirname, 'app_server', 'views'));
+app.set('view engine', 'hbs');
+hbs.registerPartials(path.join(__dirname, 'app_server', 'views', 'partials'));
 
 // Middleware setup
 app.use(logger('dev'));
