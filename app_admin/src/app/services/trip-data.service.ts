@@ -76,6 +76,11 @@ export class TripDataService {
       return Promise.reject(new Error('Sign in before saving a trip.'));
     }
 
+    const payload = {
+      ...formData,
+      price: Number(String(formData.perPerson).replace(/,/g, ''))
+    };
+
     return this.http
       .put<Trip>(`${this.tripUrl}${formData._id}`, formData, {
         headers: { Authorization: `Bearer ${token}` }
