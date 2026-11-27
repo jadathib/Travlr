@@ -50,7 +50,15 @@ export class EditTripComponent implements OnInit {
       .then(data => {
         console.log(data);
         // Don't use editForm.setValue() as it will throw
-        this.editForm.patchValue(data);
+        this.editForm.patchValue({
+          ...data,
+          code: data.code ?? '',
+          length: data.duration ?? data.length?? '',
+          start: data.startDate ?? data.start?? '',
+          resort: data.destination ?? data.resort?? '',
+          perPerson: data.price ?? data.perPerson?? '',
+          image: data.images?.[0] ?? data.image?? ''
+        });
       })
   }
 
