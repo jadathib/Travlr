@@ -112,3 +112,18 @@ Production builds use `/api` on the same origin. Route that path to Express when
 hosting the admin app, or configure a separate API URL in `environment.prod.ts`.
 
 Run the backend regression checks with `npm test` from the repository root.
+
+### Sync older trip records
+
+The public `/travel` page and Traveler Admin both read the same trips in MongoDB.
+Both can display older trip records with fields such as `resort` and `image`.
+To persist the missing fields, run this from the repository root:
+
+```sh
+node scripts/repair-trip-data.js
+```
+
+The preview prints the database name and fields that can be filled. After
+checking the preview, add `--apply` to save those fields. The script preserves
+existing values and galleries, skips concurrently edited records, and leaves
+unknown values blank. Run the preview again to confirm the repair.
