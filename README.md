@@ -127,3 +127,18 @@ The preview prints the database name and fields that can be filled. After
 checking the preview, add `--apply` to save those fields. The script preserves
 existing values and galleries, skips concurrently edited records, and leaves
 unknown values blank. Run the preview again to confirm the repair.
+
+### Hosted Traveler Admin
+
+Set the Render build command to:
+
+```sh
+npm ci && npm --prefix app_admin ci --include=dev && npm --prefix app_admin run build -- --base-href /admin/
+```
+
+Keep the start command as `npm start`. The Angular build is served at `/admin/`
+and uses the same service's `/api`. The public Travel page remains at `/travel`.
+
+Create a Traveler Admin login in the **hosted demo database**, then grant that
+account the admin role using the Admin trip access steps above. Keep the login
+private.
