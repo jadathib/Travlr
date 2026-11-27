@@ -32,7 +32,7 @@ const tripSchema = new mongoose.Schema({
         validate: {
             validator: function(value) {
                 // End date must be after or equal to start date
-                return value >= this.startDate;
+                return value >= this.get('startDate');
             },
             message: 'End date must be after or equal to start date'
         }

@@ -76,9 +76,20 @@ export class TripDataService {
       return Promise.reject(new Error('Sign in before saving a trip.'));
     }
 
+    //DATE VARIABLES TO ADD TO PAYLOAD
+    const startDate = new Date(formData.start);
+    const nights = Number(formData.length);
+    const endDate = new Date(startDate.getTime());
+
+    endDate.setUTCDate(endDate.getUTCDate() + nights);
+
     const payload = {
       ...formData,
-      price: Number(String(formData.perPerson).replace(/,/g, ''))
+      price: Number(String(formData.perPerson).replace(/,/g, '')),
+      startDate,
+      endDate,
+      destination: formData.resort,
+      images: [formData.image],
     };
 
     return this.http
