@@ -1,113 +1,48 @@
 <!DOCTYPE html>
-<!-- Website template by freewebsitetemplates.com -->
-<html>
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Rooms - Travlr Getaways Website Template</title>
-	<link rel="stylesheet" href="css/style.css" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rooms | Travlr Getaways</title>
+    <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-	<div id="background">
-		<div id="page">
-			<div id="header">
-				<div id="logo">
-					<a href="index.html"><img src="images/logo.png" alt="LOGO" height="100" width="200"></a>
-				</div>
-				<div id="navigation">
-					<ul>
-						<li>
-							<a href="index.html">Home</a>
-						</li>
-						<li>
-							<a href="travel.html">Travel</a>
-						</li>
-						<li class="selected">
-							<a href="rooms.html">Rooms</a>
-						</li>
-						<li>
-							<a href="meals.html">Meals</a>
-						</li>
-						<li>
-							<a href="news.html">News</a>
-						</li>
-						<li>
-							<a href="about.html">About</a>
-						</li>
-						<li>
-							<a href="contact.html">Contact</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div id="contents">
-				<div class="box">
-					<div>
-						<div class="body">
-							<h1>Rooms</h1>
-							<ul id="rooms">
-								<li>
-									<a href="rooms.html"><img src="images/first-class.jpg" alt="Img"></a>
-									<h2><a href="rooms.html">First Class Room</a></h2>
-									<p>
-										Cras dui sapien, feugiat vitae tristique ut, lobortis tempor orci. Donec pulvinar sagittis metus ut tristique. Pellentes que habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas idios.
-									</p>
-									<span class="rate">Rate: 220 / Day</span>
-								</li>
-								<li>
-									<a href="rooms.html"><img src="images/deluxe.jpg" alt="Img"></a>
-									<h2><a href="rooms.html">Deluxe Room</a></h2>
-									<p>
-										Sed et augue lorem. In sit amet placerat arcu. Mauris volutpat ipsum ac justo mollis vel vestibulum orci gravida. Vestibulum sit amet porttitor odio. Nulla facilisi. Fusce at pretium felis.
-									</p>
-									<span class="rate">Rate: 150 / Day</span>
-								</li>
-								<li>
-									<a href="rooms.html"><img src="images/suite.jpg" alt="Img"></a>
-									<h2><a href="rooms.html">Suite Room</a></h2>
-									<p>
-										Sed et augue lorem. In sit amet placerat arcu. Mauris volutpat ipsum ac justo mollis vel vestibulum orci gravida. Vestibulum sit amet porttitor odio. Nulla facilisi. Fusce at pretium felis.
-									</p>
-									<span class="rate">Rate: 180 / Day</span>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div id="footer">
-			<div>
-				<ul class="navigation">
-					<li>
-						<a href="index.html">Home</a>
-					</li>
-					<li>
-						<a href="travel.html">Travele</a>
-					</li>
-					<li class="active">
-						<a href="rooms.html">Rooms</a>
-					</li>
-					<li>
-						<a href="meals.html">Meals</a>
-					</li>
-					<li>
-						<a href="news.html">News</a>
-					</li>
-					<li>
-						<a href="about.html">About</a>
-					</li>
-					<li>
-						<a href="contact.html">Contact</a>
-					</li>
-				</ul>
-				<div id="connect">
-					<a href="http://pinterest.com/fwtemplates/" target="_blank" class="pinterest"></a> <a href="http://freewebsitetemplates.com/go/facebook/" target="_blank" class="facebook"></a> <a href="http://freewebsitetemplates.com/go/twitter/" target="_blank" class="twitter"></a> <a href="http://freewebsitetemplates.com/go/googleplus/" target="_blank" class="googleplus"></a>
-				</div>
-			</div>
-			<p>
-				© 2023 by Travlr Getaways. All Rights Reserved
-			</p>
-		</div>
-	</div>
+    <header class="site-header">
+        <div class="shell header-inner">
+            <a class="brand" href="/">Travlr <span>Getaways</span></a>
+            <nav aria-label="Main navigation">
+                <a href="/">Home</a>
+                <a href="/travel">Travel</a>
+                <a href="/rooms.html" aria-current="page">Rooms</a>
+                <a href="/meals.html">Meals</a>
+                <a href="/news.html">News</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <main class="shell">
+        <header class="travel-heading"><h1>Rooms</h1></header>
+        <div class="tiles">
+            <article class="tile">
+                <img src="/images/first-class.jpg" alt="First Class Room">
+                <div class="tile-copy"><h2>First Class Room</h2><p class="rate">220 per day</p></div>
+            </article>
+            <article class="tile">
+                <img src="/images/deluxe.jpg" alt="Deluxe Room">
+                <div class="tile-copy"><h2>Deluxe Room</h2><p class="rate">150 per day</p></div>
+            </article>
+            <article class="tile">
+                <img src="/images/suite.jpg" alt="Suite Room">
+                <div class="tile-copy"><h2>Suite Room</h2><p class="rate">180 per day</p></div>
+            </article>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="shell footer-inner">
+            <a class="brand" href="/">Travlr <span>Getaways</span></a>
+            <a href="/contact.html">Contact</a>
+        </div>
+    </footer>
 </body>
 </html>
