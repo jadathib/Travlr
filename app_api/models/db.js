@@ -24,6 +24,3 @@ mongoose.connection.on('disconnected', () => {
 // Import schemas
 require('./user'); // Ensure the `user` schema is registered
 require('./trips'); // Register the `trips` schema
-
-//THE FREAKING REVIEWS MODELS WAS MISSING
-//require('./reviews'); // Register the `reviews` schema
