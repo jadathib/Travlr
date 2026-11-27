@@ -1,6 +1,7 @@
 <div class="col-md-6">
   <h2 class="text-center">Edit Trip</h2>
   <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="formError" class="alert alert-danger" role="alert">{{ formError }}</div>
 
   <div class="form-group">
     <label>Code:</label>

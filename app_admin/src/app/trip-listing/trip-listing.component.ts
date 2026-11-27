@@ -40,8 +40,8 @@ export class TripListingComponent implements OnInit {
         });
   }
 
-  public isLoggedIn(): boolean { 
-    return this.authService.isLoggedIn();
+  public isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   ngOnInit(): void {

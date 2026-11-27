@@ -12,6 +12,7 @@ export class EditTripComponent implements OnInit {
 
   editForm!: FormGroup;
   submitted = false;
+  formError = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -21,30 +22,25 @@ export class EditTripComponent implements OnInit {
 
   ngOnInit() {
     // retrieve stashed tripId
-    let tripCode = localStorage.getItem("tripCode");
     const tripId = localStorage.getItem("tripId");
-    if (!tripCode || !tripId) {
-      alert ("Something wrong, couldn't find where I stashed tripCode!");
+    if (!tripId) {
+      alert ("Select a trip from the trip list.");
       this.router.navigate(['']);
       return;
     }
 
-    console.log('EditTripComponent#onInit found tripCode ' + tripCode);
-
     //initialize form
     this.editForm = this.formBuilder.group({
       _id: [],
-      //code: [tripCode, Validators.required],
+      code: [{ value: '', disabled: true }],
       name: ['', Validators.required],
       length: ['', Validators.required],
       start: ['', Validators.required],
       resort: ['', Validators.required],
-      perPerson: ['', Validators.required],
-      image: ['', Validators.required],
+      perPerson: [''],
+      image: [''],
       description: ['', Validators.required],
     })
-
-    console.log('EditTripComponent#onInit calling TripDataService#getTrip(\'' + tripCode + '\')');
 
     this.tripService.getTrip(tripId)
       .then(data => {
@@ -53,24 +49,28 @@ export class EditTripComponent implements OnInit {
         this.editForm.patchValue({
           ...data,
           code: data.code ?? '',
-          length: data.duration ?? data.length?? '',
-          start: data.startDate ?? data.start?? '',
+          length: data.duration ?? data.length?.match(/^\d+/)?.[0] ?? '',
+          start: data.startDate ?? data.start ?? '',
           resort: data.destination ?? data.resort?? '',
           perPerson: data.price ?? data.perPerson?? '',
           image: data.images?.[0] ?? data.image?? ''
         });
       })
+      .catch(error => { this.formError = String(error); });
   }
 
   onSubmit() {
     this.submitted = true;
+    this.formError = '';
 
-    if (this.editForm.valid) {
-      this.tripService.updateTrip(this.editForm.value)
+    if (this.editForm.valid && this.editForm.value._id) {
+      const datesChanged = this.f.start.dirty || this.f.length.dirty;
+      this.tripService.updateTrip(this.editForm.value, datesChanged)
         .then((data: any) => {
           console.log(data);
-          this.router.navigate(['']);
-        });
+          this.router.navigate(['/list-trips']);
+        })
+        .catch(error => { this.formError = String(error); });
     }
   }
 

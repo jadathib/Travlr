@@ -19,6 +19,10 @@ export class NavbarComponent implements OnInit {
   public isLoggedIn(): boolean { 
     return this.authenticationService.isLoggedIn(); 
   }
+  public isAdmin(): boolean {
+    return this.authenticationService.isAdmin();
+  }
+
   public onLogout(): void { 
     this.authenticationService.logout(); 
     this.router.navigateByUrl('#'); 

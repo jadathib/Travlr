@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha app_api/tests/**/*.test.js --timeout 10000",
+    "test": "node --test app_api/tests/*.test.js",
     "dev": "nodemon ./bin/www"
   },
   "dependencies": {

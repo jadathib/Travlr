@@ -21,7 +21,9 @@ const tripSchema = new mongoose.Schema({
         validate: {
             validator: function(value) {
                 // Start date must be in the future
-                return value >= new Date(new Date().setHours(0, 0, 0, 0));
+                const today = new Date();
+                today.setUTCHours(0, 0, 0, 0);
+                return value >= today;
             },
             message: 'Start date must be today or in the future'
         }
@@ -32,7 +34,7 @@ const tripSchema = new mongoose.Schema({
         validate: {
             validator: function(value) {
                 // End date must be after or equal to start date
-                return value >= this.get('startDate');
+                return value >= this.startDate;
             },
             message: 'End date must be after or equal to start date'
         }
@@ -75,7 +77,8 @@ const tripSchema = new mongoose.Schema({
         ref: 'User'
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    optimisticConcurrency: true
 });
 
 // Add index for better query performance
@@ -86,31 +89,12 @@ tripSchema.index({ featured: 1 });
 
 // Virtual for trip duration
 tripSchema.virtual('duration').get(function() {
+    if (!this.startDate || !this.endDate) return undefined;
     return Math.ceil((this.endDate - this.startDate) / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for reviews - this will allow us to populate reviews for a trip
-tripSchema.virtual('reviews', {
-    ref: 'Review',
-    localField: '_id',
-    foreignField: 'trip'
-});
-
-// Method to get average rating from reviews
-tripSchema.methods.getAverageRating = async function() {
-    const Review = mongoose.model('Review');
-    const result = await Review.aggregate([
-        { $match: { trip: this._id } },
-        { $group: { _id: null, avgRating: { $avg: '$rating' } } }
-    ]);
-
-    return result.length > 0 ? result[0].avgRating : 0;
-};
-
-// Ensure virtuals are included in JSON output
+// Include duration in API responses.
 tripSchema.set('toJSON', { virtuals: true });
 tripSchema.set('toObject', { virtuals: true });
 
-const Trip = mongoose.model('trips', tripSchema);
-
-module.exports = Trip;
+module.exports = mongoose.model('trips', tripSchema);

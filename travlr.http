@@ -1,2 +1,9 @@
 ###
-GET http://localhost:3000/api/trips/
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+  "name": "Jada Thibodeaux",
+  "email": "jada.thibodeaux@snhu.edu",
+  "password": "Bitchpleaze1!"
+}

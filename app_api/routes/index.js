@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 // Import controllers
 const authController = require('../controllers/authentication');
 const tripsController = require('../controllers/trips');
-//UNTIL I ADD THE CONTROLLER AND MODEL, JUST REMOVE
-//const reviewsController = require('../controllers/reviews');
 
 // Authentication middleware
 const auth = (req, res, next) => {
@@ -37,23 +36,27 @@ const auth = (req, res, next) => {
     }
 };
 
+const requireAdmin = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id).select('role');
+        if (user?.role !== 'admin') {
+            return res.status(403).json({ message: 'An administrator account is required.' });
+        }
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
 // Authentication routes
 router.post('/login', authController.login);
 router.post('/register', authController.register);
 
 // Trips routes
 router.get('/trips', tripsController.getTrips);
-router.post('/trips', auth, tripsController.createTrip);
+router.post('/trips', auth, requireAdmin, tripsController.createTrip);
 router.get('/trips/:tripId', tripsController.getTripById);
-router.put('/trips/:tripId', auth, tripsController.updateTrip);
-router.delete('/trips/:tripId', auth, tripsController.deleteTrip);
-
-//COMMENT EVERYTHING WITH THE REVIEWS ROUTER TO
-// Reviews routes
-// router.get('/trips/:tripId/reviews', reviewsController.getReviewsByTrip);
-// router.post('/trips/:tripId/reviews', auth, reviewsController.createReview);
-// router.get('/reviews/:reviewId', reviewsController.getReviewById);
-// router.put('/reviews/:reviewId', auth, reviewsController.updateReview);
-// router.delete('/reviews/:reviewId', auth, reviewsController.deleteReview);
+router.put('/trips/:tripId', auth, requireAdmin, tripsController.updateTrip);
+router.delete('/trips/:tripId', auth, requireAdmin, tripsController.deleteTrip);
 
 module.exports = router;

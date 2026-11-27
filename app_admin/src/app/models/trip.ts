@@ -10,7 +10,7 @@ export interface Trip {
   destination?: string,
   perPerson: string,
   price?: number,
-  image: string[],
+  image: string,
   images?: string[],
   description: string
 }
