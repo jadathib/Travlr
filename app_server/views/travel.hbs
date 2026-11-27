@@ -1,39 +1,65 @@
 <!DOCTYPE html>
-<!-- Website template by freewebsitetemplates.com -->
-<html>
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>{{title}}</title>
-	<link rel="stylesheet" href="/css/style.css" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/css/travel.css">
 </head>
 <body>
-	<div id="background">
-		<div id="page">
-			{{> header }}
-			<div id="contents">
-				<div class="box">
-					<div>
-						<div class="body">
-							<h1>Travel</h1>
-							{{#if message}}<p>{{message}}</p>{{/if}}
-							<ul id="sites">
-			{{#each trips}}
-								<li>
-									{{#if thumbnail}}<img src="{{thumbnail}}" alt="{{name}}">{{/if}}
-                                <h2>{{name}}</h2>
-                                {{#if destination}}<p>{{destination}}</p>{{/if}}
-                                {{#if lengthLabel}}<p>{{lengthLabel}}</p>{{/if}}
-                                {{#if priceLabel}}<p>{{priceLabel}} per person</p>{{/if}}
-                                <p>{{descriptionText}}</p>
-                                </li>
-			{{/each}}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-			{{> footer }}
-	</div>
+    <header class="site-header">
+        <div class="shell header-inner">
+            <a class="brand" href="/index.html">Travlr <span>Getaways</span></a>
+            <nav aria-label="Main navigation">
+                <a href="/index.html">Home</a>
+                <a href="/travel" aria-current="page">Travel</a>
+                <a href="/rooms.html">Rooms</a>
+                <a href="/meals.html">Meals</a>
+                <a href="/news.html">News</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="shell">
+        <header class="travel-heading">
+            <h1>Travel</h1>
+        </header>
+
+        {{#if message}}<p class="travel-message">{{message}}</p>{{/if}}
+        {{#if trips.length}}
+        <ul class="trip-list">
+            {{#each trips}}
+            <li>
+                <article class="trip{{#unless thumbnail}} trip--no-photo{{/unless}}">
+                    {{#if thumbnail}}
+                    <div class="trip-photo">
+                        <img src="{{thumbnail}}" alt="" {{#unless @first}}loading="lazy"{{/unless}} decoding="async">
+                    </div>
+                    {{/if}}
+                    <div class="trip-details">
+                        <h2>{{name}}</h2>
+                        {{#if destination}}<p class="trip-resort">{{destination}}</p>{{/if}}
+                        <div class="trip-facts">{{#if lengthLabel}}
+                            <span>{{lengthLabel}}</span>
+                        {{/if}}{{#if priceLabel}}
+                            <span class="trip-price"><strong>{{priceLabel}}</strong> per person</span>
+                        {{/if}}</div>
+                        {{#if descriptionText}}<p class="trip-description">{{descriptionText}}</p>{{/if}}
+                    </div>
+                </article>
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-inner">
+            <a class="brand" href="/index.html">Travlr <span>Getaways</span></a>
+            <a href="/contact.html">Contact</a>
+        </div>
+    </footer>
 </body>
 </html>
