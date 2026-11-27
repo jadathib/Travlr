@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const Trip = mongoose.model('trips');
+const { tripView } = require('../models/trip-data');
 
 // Get all trips
 const getTrips = async (req, res) => {
     try {
-        const trips = await Trip.find({});
-        res.status(200).json(trips);
+        const trips = await Trip.find({}).lean();
+        res.status(200).json(trips.map(tripView));
     } catch (err) {
         res.status(400).json(err);
     }
@@ -16,7 +17,7 @@ const createTrip = async (req, res) => {
     try {
         const trip = new Trip(req.body);
         const newTrip = await trip.save();
-        res.status(201).json(newTrip);
+        res.status(201).json(tripView(newTrip.toObject()));
     } catch (err) {
         res.status(400).json(err);
     }
@@ -26,11 +27,11 @@ const createTrip = async (req, res) => {
 const getTripById = async (req, res) => {
     try {
         const tripId = req.params.tripId;
-        const trip = await Trip.findById(tripId);
+        const trip = await Trip.findById(tripId).lean();
         if (!trip) {
             return res.status(404).json({ message: "Trip not found" });
         }
-        res.status(200).json(trip);
+        res.status(200).json(tripView(trip));
     } catch (err) {
         res.status(400).json(err);
     }
@@ -65,7 +66,7 @@ const updateTrip = async (req, res) => {
         }
 
         await trip.save({ validateModifiedOnly: true });
-        res.status(200).json(trip);
+        res.status(200).json(tripView(trip.toObject()));
     } catch (err) {
         if (err instanceof mongoose.Error.VersionError) {
             return res.status(409).json({ message: 'This trip changed. Reopen it and try again.' });

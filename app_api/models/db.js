@@ -10,7 +10,7 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Log database connection events
 mongoose.connection.on('connected', () => {
-  console.log(`Mongoose connected to ${dbURI}`);
+  console.log('Mongoose connected');
 });
 
 mongoose.connection.on('error', (err) => {

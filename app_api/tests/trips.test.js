@@ -54,5 +54,5 @@ test('a valid date range saves and is serialized with its duration', async conte
         startDate: '2099-09-13', endDate: '2099-10-01'
     }, { startDate: '2099-09-13', endDate: '2099-09-26' });
     assert.equal(response.statusCode, 200);
-    assert.equal(response.body.toJSON().duration, 18);
+    assert.equal(response.body.duration, 18);
 });
