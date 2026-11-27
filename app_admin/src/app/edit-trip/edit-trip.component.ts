@@ -34,7 +34,7 @@ export class EditTripComponent implements OnInit {
     //initialize form
     this.editForm = this.formBuilder.group({
       _id: [],
-      code: [tripCode, Validators.required],
+      //code: [tripCode, Validators.required],
       name: ['', Validators.required],
       length: ['', Validators.required],
       start: ['', Validators.required],
