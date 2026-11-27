@@ -3,6 +3,7 @@ export interface Trip {
   code: string,
   name: string,
   length: string,
+  duration?: number,
   start: Date,
   resort: string,
   perPerson: string,
