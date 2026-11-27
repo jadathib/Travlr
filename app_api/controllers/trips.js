@@ -39,17 +39,37 @@ const getTripById = async (req, res) => {
 // Update a trip
 const updateTrip = async (req, res) => {
     try {
-        const tripId = req.params.tripId;
-        const updatedTrip = await Trip.findByIdAndUpdate(
-            tripId, 
-            req.body, 
-            { new: true, runValidators: true }
-        );
-        if (!updatedTrip) {
-            return res.status(404).json({ message: "Trip not found" });
+        const trip = await Trip.findById(req.params.tripId);
+        if (!trip) {
+            return res.status(404).json({ message: 'Trip not found' });
         }
-        res.status(200).json(updatedTrip);
+
+        const fields = ['name', 'description', 'destination', 'price', 'images',
+            'startDate', 'endDate', 'rating', 'featured'];
+        for (const field of fields) {
+            if (Object.hasOwn(req.body, field)) trip.set(field, req.body[field]);
+        }
+
+        if (Object.hasOwn(req.body, 'thumbnail')) {
+            const thumbnail = req.body.thumbnail;
+            if (typeof thumbnail !== 'string' || !thumbnail.trim()) {
+                return res.status(400).json({ message: 'Image is required.' });
+            }
+            trip.images = [thumbnail.trim(), ...(trip.images ?? []).slice(1)];
+        }
+
+        if (trip.isModified('startDate') || trip.isModified('endDate')) {
+            if (!trip.startDate || !trip.endDate || trip.endDate < trip.startDate) {
+                return res.status(400).json({ message: 'End date must be after or equal to start date' });
+            }
+        }
+
+        await trip.save({ validateModifiedOnly: true });
+        res.status(200).json(trip);
     } catch (err) {
+        if (err instanceof mongoose.Error.VersionError) {
+            return res.status(409).json({ message: 'This trip changed. Reopen it and try again.' });
+        }
         res.status(400).json(err);
     }
 };

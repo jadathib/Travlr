@@ -36,21 +36,28 @@ export class AuthenticationService {
     this.storage.removeItem('travlr-token');
   }
 
-  public isLoggedIn(): boolean { 
-    const token: string = this.getToken() as string; //I got an error right here saying string|null is not assignable to type 'string' which is why this.getToken() as string is there
-    if (token) { 
-      const payload = JSON.parse(atob(token.split('.')[1])); 
-      return payload.exp > (Date.now() / 1000); 
-    } else { 
-      return false;
-    }
+  public isLoggedIn(): boolean {
+    return this.getSession() !== undefined;
   }
 
-  public getCurrentUser(): User | undefined { 
-    if (this.isLoggedIn()) { 
-      const token: string = this.getToken() as string; 
-      const { email, name } = JSON.parse(atob(token.split('.')[1])); 
-      return { email, name} as User;
+  public isAdmin(): boolean {
+    return this.getSession()?.role === 'admin';
+  }
+
+  public getCurrentUser(): User | undefined {
+    const session = this.getSession();
+    return session && { email: session.email, name: session.name };
+  }
+
+  private getSession(): { email: string; name: string; role?: string; exp: number } | undefined {
+    const payload = this.getToken()?.split('.')[1];
+    if (!payload) return undefined;
+
+    try {
+      const session = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+      return session?.exp > Date.now() / 1000 ? session : undefined;
+    } catch {
+      return undefined;
     }
   }
 }

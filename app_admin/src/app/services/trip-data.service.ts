@@ -4,12 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { AuthResponse } from '../models/authresponse';
 import { BROWSER_STORAGE } from '../storage';
 import { Trip } from '../models/trip';
+import { environment } from '../../environments/environment';
 import { User } from '../models/user';
 
 @Injectable()
 export class TripDataService {
 
-  private apiBaseUrl = 'http://localhost:3000/api';
+  private apiBaseUrl = environment.apiBaseUrl;
   private tripUrl = `${this.apiBaseUrl}/trips/`; // Added trailing slash
 
   constructor(
@@ -69,7 +70,7 @@ export class TripDataService {
       .catch(this.handleError);
   }
 
-  public updateTrip(formData: Trip): Promise<Trip> {
+  public updateTrip(formData: Trip, datesChanged: boolean): Promise<Trip> {
     const token = this.storage.getItem('travlr-token');
 
     if (!token) {
@@ -83,13 +84,15 @@ export class TripDataService {
 
     endDate.setUTCDate(endDate.getUTCDate() + nights);
 
+    const price = String(formData.perPerson ?? '').trim();
+    const thumbnail = formData.image?.trim();
     const payload = {
-      ...formData,
-      price: Number(String(formData.perPerson).replace(/,/g, '')),
-      startDate,
-      endDate,
+      name: formData.name,
+      description: formData.description,
+      ...(price ? { price: Number(price.replace(/,/g, '')) } : {}),
+      ...(datesChanged ? { startDate, endDate } : {}),
       destination: formData.resort,
-      images: [formData.image],
+      ...(thumbnail ? { thumbnail } : {}),
     };
 
     return this.http
@@ -103,7 +106,7 @@ export class TripDataService {
   // Error handling for HTTP requests
   private handleError(error: any): Promise<any> {
     console.error('Something has gone wrong', error); // For demo purposes only
-    return Promise.reject(error.message || error);
+    return Promise.reject(error.error?.message || error.message || error);
   }
 
   // Login method

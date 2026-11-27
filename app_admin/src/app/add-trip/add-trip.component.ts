@@ -13,6 +13,7 @@ export class AddTripComponent implements OnInit {
 
   addForm!: FormGroup;
   submitted = false;
+  formError = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -94,12 +95,14 @@ export class AddTripComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    this.formError = '';
     if(this.addForm.valid){
       this.tripService.addTrip(this.addForm.value )
       .then( data => {
         console.log(data);
-        this.router.navigate(['']);
-      });
+        this.router.navigate(['/list-trips']);
+      })
+      .catch(error => { this.formError = String(error); });
     }
   }
 

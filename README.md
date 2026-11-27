@@ -93,3 +93,22 @@ If you get an `EADDRINUSE` error:
 
 #### CORS Issues
 - Verify that the FRONTEND_ORIGIN and ADMIN_ORIGIN in your `.env` file match the actual URLs of your frontend and admin applications
+
+### Admin trip access
+
+Newly registered accounts have the `user` role. On your local development
+database, grant the role to an existing, trusted account using the MongoDB console:
+
+```javascript
+db.users.updateOne({ email: 'your-admin-email@example.com' }, { $set: { role: 'admin' } })
+```
+
+Sign out of Traveler Admin and sign back in to refresh the role shown in the UI.
+Review any accounts already marked `admin` before deploying an upgraded database,
+since older versions allowed registration to supply a role.
+
+The Angular development API URL is set in `app_admin/src/environments/environment.ts`.
+Production builds use `/api` on the same origin. Route that path to Express when
+hosting the admin app, or configure a separate API URL in `environment.prod.ts`.
+
+Run the backend regression checks with `npm test` from the repository root.

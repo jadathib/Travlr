@@ -1,12 +1,12 @@
 <div class="card ml-4" style="width: 18rem;">
   <div class="card-header">{{ trip.name }}</div>
-  <img [src]="trip.image ? 'assets/images/' + trip.image : trip.images?.[0]"
+  <img [src]="trip.images?.[0] || (trip.image ? 'assets/images/' + trip.image : null)"
        alt="trip thumbnail" class="card-img-top">
   <div class="card-body">
     <h6 class="card-subtitle mb-2 text muted">{{ trip.destination ?? trip.resort }}</h6>
-    <p class="card-subtitle mt-3 mb-3 text-muted">{{ trip.length || (trip.duration != null ? (trip.duration + ' nights / ' + (trip.duration + 1) + ' days') : '') }} only {{ trip.price || trip.perPerson | currency: 'USD': 'symbol' }} per person </p>
+    <p class="card-subtitle mt-3 mb-3 text-muted">{{ (trip.duration != null ? (trip.duration + ' nights / ' + (trip.duration + 1) + ' days') : trip.length) }} only {{ (trip.price ?? trip.perPerson) | currency: 'USD': 'symbol' }} per person </p>
     <p class="card-text" [innerHTML]="trip.description"></p>
-    <div *ngIf="isLoggedIn()">
+    <div *ngIf="isAdmin()">
       <button (click)="editTrip(trip)" class="btn btn info">Edit</button>
     </div>
   </div>

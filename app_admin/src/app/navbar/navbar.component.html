@@ -16,7 +16,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="add-trip">Add Trip</a>
+          <a class="nav-link" routerLink="add-trip" *ngIf="isAdmin()">Add Trip</a>
         </li>
       </ul>
 
