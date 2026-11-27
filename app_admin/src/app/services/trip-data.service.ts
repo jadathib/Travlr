@@ -82,7 +82,7 @@ export class TripDataService {
     };
 
     return this.http
-      .put<Trip>(`${this.tripUrl}${formData._id}`, formData, {
+      .put<Trip>(`${this.tripUrl}${formData._id}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .toPromise()
