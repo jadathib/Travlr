@@ -51,6 +51,14 @@ app.use('/users', usersRouter);
 app.use('/travel', travelRouter);
 app.use('/api', apiRouter);
 
+// Serve the optional production Angular build, including direct navigation to SPA routes.
+const adminBuild = path.join(__dirname, 'app_admin', 'dist', 'travlr-admin');
+app.get(/^\/admin$/, (req, res) => res.redirect(302, '/admin/'));
+app.use('/admin', express.static(adminBuild, { index: false }));
+app.get(['/admin/', '/admin/login', '/admin/list-trips', '/admin/add-trip', '/admin/edit-trip'], (req, res, next) => {
+  res.sendFile('index.html', { root: adminBuild }, err => { if (err) next(err); });
+});
+
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
